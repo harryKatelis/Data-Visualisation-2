@@ -1,0 +1,95 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "description": "Number of Cases vs Proportion (excluding Australia) with size, year filter, labels, and mean lines",
+  "width": 800,
+  "height": 600,
+  "title": {
+    "text": "Heart, Stroke & Vascular Disease per State for 2011 & 2017",
+    "fontSize": 20,
+    "fontWeight": 700,
+    "anchor": "middle",
+    "color": "#000000",
+    "offset": 30,
+    "subtitlePadding": 10
+  },
+  "data": {
+    "url": "https://raw.githubusercontent.com/harryKatelis/FIT3179-Vega-lite/refs/heads/main/genderYearsCombinedFINAL.csv",
+    "format": {"type": "csv"}
+  },
+  "params": [
+    {
+      "name": "Year_selection",
+      "bind": {"input": "select", "options": [2011, 2017], "name": "Select Year: "},
+      "value": 2017
+    }
+  ],
+  "transform": [
+    {"filter": "datum.State != 'Australia' && datum.Year == Year_selection"},
+    {"calculate": "toNumber(datum['Number of Cases'])", "as": "NumericCases"},
+    {"calculate": "toNumber(trim(datum['Proportion (%) of Population']))", "as": "Proportion"},
+    {"calculate": "toNumber(datum['Total Population'])", "as": "NumericPopulation"},
+    {
+      "calculate": "datum.State === 'Northern Territory' ? 'NT' : datum.State === 'Australian Capital Territory' ? 'ACT' : datum.State === 'South Australia' ? 'SA' : datum.State === 'Western Australia' ? 'WA' : datum.State === 'New South Wales' ? 'NSW' : datum.State === 'Victoria' ? 'VIC' : datum.State === 'Queensland' ? 'QLD' : datum.State === 'Tasmania' ? 'TAS' : datum.State",
+      "as": "StateLabel"
+    }
+  ],
+  "layer": [
+    {
+      "mark": {"type": "circle", "tooltip": true},
+      "encoding": {
+        "x": {"field": "NumericCases", "type": "quantitative", "title": "Number of Cases", "scale": {"domain": [0, 25000]}},
+        "y": {"field": "Proportion", "type": "quantitative", "title": "Proportion (%) of Population with Heart / Stroke / Vascular Disease ", "scale": {"domain": [0, 2.5]}},
+        "size": {
+          "field": "NumericPopulation",
+          "type": "quantitative",
+          "scale": {"range": [100, 2000]},
+          "title": "Population",
+          "legend": {"orient": "right", "labelFontSize": 12, "titleFontSize": 13}
+        },
+        "color": {"field": "State", "type": "nominal", "legend": null,"scale":{"range": [ "#1f77b4", "#9467bd", "#17becf", "#8c564b", "#e377c2", "#7f7f7f", "#bcbd22", "#aec7e8", "#c5b0d5"]}},
+        "tooltip": [
+          {"field": "State", "type": "nominal"},
+          {"field": "StateLabel", "type": "nominal", "title": "Abbreviation"},
+          {"field": "Year", "type": "ordinal"},
+          {"field": "NumericCases", "type": "quantitative", "title": "Number of Cases","format": ","},
+          {"field": "Proportion", "type": "quantitative", "title": "Proportion (%)"},
+          {"field": "NumericPopulation", "type": "quantitative", "title": "Population", "format": ","}
+        ]
+      }
+    },
+    {
+      "mark": {"type": "text", "dy": 0,"dx":15, "fontSize": 14, "fontWeight": "bold", "align": "center"},
+      "encoding": {
+        "x": {"field": "NumericCases", "type": "quantitative", "scale": {"domain": [0, 600000]}},
+        "y": {"field": "Proportion", "type": "quantitative", "scale": {"domain": [0, 15]}},
+        "text": {"field": "StateLabel"},
+        "color": {"value": "black"}
+      }
+    },
+    {
+      "mark": {"type": "rule", "color": "grey", "strokeWidth": 2, "opacity": 0.3},
+      "encoding": {"y": {"field": "Proportion", "type": "quantitative", "aggregate": "mean"}}
+    },
+    {
+      "transform": [
+        {"aggregate": [{"op": "mean", "field": "Proportion", "as": "MeanProportion"}]},
+        {"calculate": "'Mean: ' + format(datum.MeanProportion, '.2f') + '%'", "as": "MeanLabel"}
+      ],
+      "mark": {"type": "text", "align": "left", "baseline": "bottom", "dx": 5, "dy": 15, "fontSize": 12, "color": "grey"},
+      "encoding": {"x": {"value": 700}, "y": {"field": "MeanProportion", "type": "quantitative"}, "text": {"field": "MeanLabel", "type": "nominal"}}
+    },
+    {
+      "transform": [
+        {"aggregate": [{"op": "median", "field": "NumericCases", "as": "MedianCases"}]},
+        {"calculate": "'Median: ' + format(datum.MedianCases, ',.0f') + ' '+'Cases'", "as": "MeanCasesLabel"}
+      ],
+      "mark": {"type": "text", "align": "left", "baseline": "top", "dy": -1, "dx": 120,"fontSize": 12, "color": "grey"},
+      "encoding": {"x": {"field": "MedianCases", "type": "quantitative"}, "y": {"value": 17}, "text": {"field": "MeanCasesLabel", "type": "nominal"}}
+    },
+    {
+      "mark": {"type": "rule", "color": "grey", "strokeWidth": 2, "opacity": 0.3},
+      "encoding": {"x": {"field": "NumericCases", "type": "quantitative", "aggregate": "mean"}}
+    }
+  ],
+  "config": {"axis": {"labelFontSize": 12, "gridColor": "#eeeeee", "titleFontSize": 14}, "view": {"stroke": "transparent", "fill": "transparent"}}
+}

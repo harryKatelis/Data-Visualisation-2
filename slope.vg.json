@@ -1,0 +1,64 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "description": "Slope graph of disease prevalence by gender in Australia (2011 vs 2017).",
+  "title": {
+    "text": "Disease Prevalence in Australia by Gender (2011 vs. 2017)",
+    "fontSize": 15
+  },
+  "data": {
+    "url": "https://raw.githubusercontent.com/harryKatelis/FIT3179-Vega-lite/refs/heads/main/genderAustralia.csv",
+    "format": {"type": "csv"}
+  },
+  "transform": [
+    {"filter": "datum.Year != null && datum.Year != ''"},
+    {
+      "fold": ["Number of Cases in Australia", "Male number of Cases", "Female number of Cases"],
+      "as": ["key", "Value"]
+    },
+    {
+      "calculate": "datum.key === 'Number of Cases in Australia' ? 'Total' : (datum.key === 'Male number of Cases' ? 'Male' : 'Female')",
+      "as": "Gender"
+    },
+    {
+      "calculate": "toNumber(replace(datum.Value, /,/g, '')) / 1000000",
+      "as": "NumericValue"
+    }
+  ],
+  "layer": [
+    {
+      "mark": {"type": "line", "point": {"size": 100}}, 
+      "encoding": {
+        "x": {"field": "Year", "type": "ordinal", "title": "Year", "axis": {"labelAngle": 0}},
+        "y": {"field": "NumericValue", "type": "quantitative", "title": "Number of Cases (M)", "axis": {"format": ".1f"}},
+        "color": {
+          "field": "Gender",
+          "type": "nominal",
+          "scale": {"domain": ["Total", "Female", "Male"], "range": ["#b30000", "#ff99cc", "#003366"]},
+          "legend": {"title": "Gender"}
+        },
+        "detail": {"field": "Gender"},
+        "tooltip": [
+          {"field": "Year"},
+          {"field": "Gender"},
+          {"field": "NumericValue", "format": ".2f", "title": "Number of Cases (Million)"}
+        ]
+      }
+    },
+    {
+      "mark": {"type": "text", "align": "left", "dx": -100, "dy": 20, "fontSize": 12, "fontWeight": "bold"},
+      "transform": [
+        {"filter": "datum.Year == '2017' && datum.key == 'Female number of Cases'"}
+      ],
+      "encoding": {
+        "x": {"field": "Year", "type": "ordinal"},
+        "y": {"field": "NumericValue", "type": "quantitative"},
+        "text": {"value": "Female cases decreased >100k more than Male!"}
+      }
+    }
+  ],
+  "width": 500,
+  "config": {
+    "axis": {"labelFontSize": 12, "titleFontSize": 14},
+    "view": {"stroke": "transparent"}
+  }
+}

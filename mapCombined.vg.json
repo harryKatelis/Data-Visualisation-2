@@ -1,0 +1,214 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "hconcat": [
+    {
+      "width": 500,
+      "height": 400,
+      "title": {
+        "text": "2011",
+        "fontSize": 50,
+        "anchor": "middle",
+        "offset": 10
+      },
+      "projection": {
+        "type": "mercator",
+        "center": [107, -29.5],
+        "scale": 587
+      },
+      "layer": [
+        {
+          "data": {
+            "url": "https://raw.githubusercontent.com/harryKatelis/FIT3179-Vega-lite/refs/heads/main/NEWtopo.json",
+            "format": {
+              "type": "topojson",
+              "feature": "ne_10m_admin_1_states_provinces"
+            }
+          },
+          "mark": {
+            "type": "geoshape",
+            "stroke": "#ddd",
+            "strokeWidth": 1
+          },
+          "encoding": {
+            "color": {"value": "#f0f0f0"}
+          }
+        },
+        {
+          "data": {
+            "url": "https://raw.githubusercontent.com/harryKatelis/Data-Visualisation-2/refs/heads/main/2011StateData.csv"
+          },
+          "transform": [
+            {
+              "calculate": "toNumber(replace(datum.Number, /,/g, ''))",
+              "as": "Number_numeric"
+            },
+            {
+              "calculate": "toNumber(datum['Age-standardised rate (per 100)']) * 10",
+              "as": "Rate_per_thousand"
+            },
+            {
+              "lookup": "Name",
+              "from": {
+                "data": {
+                  "url": "https://raw.githubusercontent.com/harryKatelis/FIT3179-Vega-lite/refs/heads/main/NEWtopo.json",
+                  "format": {
+                    "type": "topojson",
+                    "feature": "ne_10m_admin_1_states_provinces"
+                  }
+                },
+                "key": "properties.name",
+                "fields": ["type", "properties", "geometry"]
+              }
+            }
+          ],
+          "mark": {"type": "geoshape", "stroke": "white", "strokeWidth": 1.5},
+          "encoding": {
+            "shape": {"field": "geometry", "type": "geojson"},
+            "color": {
+              "field": "Rate_per_thousand",
+              "type": "quantitative",
+              "scale": {"scheme": "reds", "domain": [30, 120]},
+              "legend": {
+                "title": "Cases per 1,000 People",
+                "orient": "right",
+                "labelFontSize": 11,
+                "titleFontSize": 12,
+                "gradientLength": 400,
+                "titleAlign": "center"
+              }
+            },
+            "tooltip": [
+              {"field": "Name", "type": "nominal", "title": "State/Territory"},
+              {
+                "field": "Rate_per_thousand",
+                "type": "quantitative",
+                "title": "Rate per 1,000 People",
+                "format": ".1f"
+              },
+              {
+                "field": "Number_numeric",
+                "type": "quantitative",
+                "title": "Total Cases",
+                "format": ",.0f"
+              }
+            ]
+          }
+        },
+        {
+          "data": {
+            "values": [
+              {
+                "text": "Western Australia (WA) had the highest disease rate in 2011"
+              }
+            ]
+          },
+          "mark": {
+            "type": "text",
+            "fontSize": 12,
+            "color": "#7c7c7c",
+            "fontStyle": "italic"
+          },
+          "encoding": {
+            "x": {"value": 200},
+            "y": {"value": 350},
+            "text": {"field": "text"}
+          }
+        }
+      ]
+    },
+    {
+      "width": 500,
+      "height": 400,
+      "title": {
+        "text": "2017",
+        "fontSize": 50,
+        "anchor": "middle",
+        "offset": 10
+      },
+      "projection": {
+        "type": "mercator",
+        "center": [106, -29],
+        "scale": 587
+      },
+      "layer": [
+        {
+          "data": {
+            "url": "https://raw.githubusercontent.com/harryKatelis/FIT3179-Vega-lite/refs/heads/main/NEWtopo.json",
+            "format": {
+              "type": "topojson",
+              "feature": "ne_10m_admin_1_states_provinces"
+            }
+          },
+          "transform": [
+            {
+              "lookup": "properties.name",
+              "from": {
+                "data": {
+                  "url": "https://raw.githubusercontent.com/harryKatelis/FIT3179-Vega-lite/refs/heads/main/australia_prevalence2%20EDTIED.csv"
+                },
+                "key": "Name",
+                "fields": ["Number Overall", "Rate per thousand"]
+              }
+            },
+            {
+              "calculate": "toNumber(replace(datum['Number Overall'], /,/g, ''))",
+              "as": "Number_numeric"
+            },
+            {
+              "calculate": "toNumber(datum['Rate per thousand'])",
+              "as": "Rate_numeric"
+            }
+          ],
+          "mark": {"type": "geoshape", "stroke": "white", "strokeWidth": 1.5},
+          "encoding": {
+            "color": {
+              "field": "Rate_numeric",
+              "type": "quantitative",
+              "scale": {"scheme": "reds", "domain": [30, 120]},
+              "legend": null
+            },
+            "tooltip": [
+              {
+                "field": "properties.name",
+                "type": "nominal",
+                "title": "State/Territory"
+              },
+              {
+                "field": "Rate_numeric",
+                "type": "quantitative",
+                "title": "Rate per 1,000 People",
+                "format": ".1f"
+              },
+              {
+                "field": "Number_numeric",
+                "type": "quantitative",
+                "title": "Total Cases",
+                "format": ","
+              }
+            ]
+          }
+        },
+        {
+          "data": {
+            "values": [
+              {"text": "Tasmania (TAS) had the highest disease rate in 2017"}
+            ]
+          },
+          "mark": {
+            "type": "text",
+            "fontSize": 12,
+            "color": "#7c7c7c",
+            "fontStyle": "italic"
+          },
+          "encoding": {
+            "x": {"value": 220},
+            "y": {"value": 350},
+            "text": {"field": "text"}
+          }
+        }
+      ]
+    }
+  ],
+  "resolve": {"scale": {"color": "shared"}},
+  "config": {"view": {"stroke": null}}
+}

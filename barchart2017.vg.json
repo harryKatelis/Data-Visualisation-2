@@ -1,0 +1,77 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v6.json",
+  "description": "Interactive stacked bar chart for Australia 2017 by age group and gender.",
+  "width": 400,
+  "height": 400,
+  "title":{"text":"2017", "fontSize": 20},
+  "layer": [
+    {
+      "data": {
+        "values": [
+          {"AgeGroup": "18-54", "Gender": "Male", "Value": 82005},
+          {"AgeGroup": "18-54", "Gender": "Female", "Value": 98940},
+          {"AgeGroup": "55-74", "Gender": "Male", "Value": 345654},
+          {"AgeGroup": "55-74", "Gender": "Female", "Value": 250308},
+          {"AgeGroup": "75+", "Gender": "Male", "Value": 213172},
+          {"AgeGroup": "75+", "Gender": "Female", "Value": 160086}
+        ]
+      },
+      "params": [
+        {
+          "name": "hover",
+          "select": {
+            "type": "point",
+            "fields": ["Gender"],
+            "on": "mouseover"
+          },
+          "value": [{"Gender": "Female"}]
+        }
+      ],
+      "mark": "bar",
+      "encoding": {
+        "x": {
+          "field": "AgeGroup",
+          "type": "ordinal",
+          "title": "Age Group",
+          "axis": {
+            "labelAngle": 0,
+            "titleFontSize": 12,
+            "labelFontSize": 30,
+            "labelFontWeight": "bold"
+          }
+        },
+        "y": {
+          "field": "Value",
+          "type": "quantitative",
+          "title": "Number of Cases",
+          "axis": {"format": "s"},
+          "stack": "zero",
+          "scale": {"domain": [0, 650000]}
+        },
+        "color": {
+          "field": "Gender",
+          "type": "nominal",
+          "scale": {"range": ["#ff99cc", "#003366"]},
+          "legend": {"title": "Gender"}
+        },
+        "opacity": {
+          "condition": {"param": "hover", "value": 1},
+          "value": 0.3
+        },
+        "tooltip": [
+          {"field": "AgeGroup", "title": "Age Group"},
+          {"field": "Gender", "title": "Gender"},
+          {"field": "Value", "title": "Number of Cases", "format": ",.0f"}
+        ]
+      }
+    },
+    {
+      "mark": {"type": "text", "align": "center", "dy": -20, "fontSize": 16, "fontWeight": "bold"},
+      "encoding": {
+        "x": {"field": "AgeGroup", "type": "ordinal"},
+        "y": {"aggregate": "sum", "field": "Value"},
+        "text": {"value": "Females have more cases than males between 55-74 and 75+!"}
+      }
+    }
+  ]
+}

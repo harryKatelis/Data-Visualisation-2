@@ -3,37 +3,198 @@
 
 <head>
 
-    <meta charset="UTF-8">
+<meta charset="UTF-8">
 
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+<script src="https://cdn.jsdelivr.net/npm/vega@5.20.2"></script>
+<script src="https://cdn.jsdelivr.net/npm/vega-lite@5.1.0"></script>
+<script src="https://cdn.jsdelivr.net/npm/vega-embed@6.17.0"></script>
 
-    <script src="https://cdn.jsdelivr.net/npm/vega@5.20.2"></script>
+<script src="mapCombined.js"></script>
+<script src="bubble.js"></script>
 
-    <script src="https://cdn.jsdelivr.net/npm/vega-lite@5.1.0"></script>
+<style>
+  html, body {
+    background-color: #e6f2f2;
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+  }
 
-    <script src="https://cdn.jsdelivr.net/npm/vega-embed@6.17.0"></script>
+  .page-container {
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 0 20px;
+    background-color: #ffffff;
+  }
 
+  h1 {
+    background-color: #b30000;
+    color: white;
+    font-size: 48px;
+    text-align: center;
+    padding: 25px 20px;
+    border-radius: 50px;
+    margin-bottom: 50px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  }
 
-    <script src="vega_lite_vis.js"></script>
+  p.description {
+    font-size: 17px;
+    text-align: center;
+    color: #333333;
+    font-family: 'Lato', sans-serif;
+    font-weight: 400;
+    margin-bottom: 50px;
+  }
 
+  #data-banner {
+    text-align: center;
+    font-size: 0.85rem;
+    color: #555;
+    margin-top: 15px;
+    padding: 8px 0;
+    border-top: 1px solid #ccc;
+    background-color: #fafafa;
+  }
 
-    <title>Week 9 Homework </title>
+  #data-banner a {
+    color: #0066cc;
+    text-decoration: none;
+  }
 
+  #data-banner a:hover {
+    text-decoration: underline;
+  }
+
+  .faint {
+    color: rgba(95, 93, 93, 0.6);
+  }
+
+  @media (max-width: 900px) {
+    h1 {
+      font-size: 32px;
+      padding: 20px;
+    }
+
+    p.description {
+      font-size: 16px;
+      margin-bottom: 40px;
+    }
+  }
+
+</style>
 </head>
-
 
 <body>
 
-    <h1>First Vega-Lite graph</h1>
+<div class="page-container">
 
-    <div id="map">
+  <h1>Five Years of Change: <br>Tracking Cardiovascular Health Across Australia</h1>
 
+  <p class="description faint">
+    <span class="description" style="font-weight: 800;">
+      To investigate the prevalence of Heart, Vascular, and Stroke Disease in Australia,
+    </span>
+    we will first explore state-level data from 2011 to 2017 to understand how these 
+    conditions are distributed across the population. In tandem, we will examine 
+    the number of cases across different age groups 
+    <span class="description" style="font-weight: 800;">
+      (e.g., 18–54, 55–74, 75+)
+    </span> and compare trends across states and genders, before taking a focus on 
+    <span class="description" style="font-weight: 800;">
+      Victoria.
+    </span>
+  </p>
+
+  <p class="description" style="font-style: italic;">
+    Firstly, the overall trend of such diseases in Australia will be Compared. 
+    See the small multiples map below which compares the rate of disease incidents in Australia. 
+  </p>
+
+  <div class="description">
+    <div class="chart" id="mapCombined"></div>
+
+    <p class="description faint">
+      Overall, the incidence rate for persons aged 18 and over has 
+      <span class="description" style="font-weight: 800;">decreased</span>
+      from <span class="description" style="font-weight: 800;">2011</span> to 
+      <span class="description" style="font-weight: 800;">2017</span>.
+      To observe the overall trend from 2011 to 2017, refer to the slope graph below, which also highlights changes in cases by gender.
+      
+    </p>
+
+    
+    <div style="display: flex; justify-content: center; align-items: flex-start; gap: 20px; flex-wrap: wrap; margin-bottom: 40px;">
+      <div class="chart" id="slope" style="flex: 1; min-width: 400px;"></div>
+      <div style="flex: 1; min-width: 300px; display: flex; align-items: center; text-align: center; font-size: 18px; color: #333;">
+        <p>
+          This slope graph shows the change in incidence rates for persons aged 18+ from 2011 to 2017.
+          Each line represents a state, highlighting which regions saw the greatest improvement or increase 
+          in cardiovascular disease prevalence.
+        </p>
+      </div>
     </div>
+    <p class="description faint" style="text-align: center; margin-bottom: 40px; font-size: 18px;">
+      Evidently, the disease prevalence in all states has decreased. However, is there a correlation between population number and disease prevalence? See the bubble chart below.
+    </p>
+
+   
+    <div style="display: flex; justify-content: center; width: 100%;">
+      <div class="chart" id="bubble"></div>
+    </div>
+<h2 style="text-align: center; font-size: 32px; font-weight: 700; margin-top: 40px; margin-bottom: 30px; color: #b30000;">
+  How Does Change of Different Age Groups Change Between 2011 and 2017?
+</h2>
+
+
+<p class="description faint" style="text-align: center; margin: 0 auto 30px auto; font-size: 18px;">
+  The following charts compare the number of cardiovascular cases across three age groups in Australia 
+  for 2011 and 2017, split by gender. This allows us to see which age groups have seen increases or decreases 
+  and whether male or female populations are more affected in each period.
+</p>
+<h2 style="text-align: center; font-size: 20px; font-weight: 700; margin-top: 40px; margin-bottom: 30px; color: #000000;">
+Male & Female Cardiovascular Disease Cases Broken Down by Age Group
+
+
+</h2>
+<div style="display: flex; justify-content: center; gap: 40px; flex-wrap: wrap; margin-bottom: 50px;">
+  <div class="chart" id="barchart2011" style="flex: 1; min-width: 400px;"></div>
+  <div class="chart" id="barchart2017" style="flex: 1; min-width: 400px;"></div>
+</div>
+<p class=" description faint" style="text-align: center; margin: 0 auto 30px auto; font-size: 18px;">
+  As seen above, there are a higher number of cases in Males that are aged 75+ and 55-74 in 2013, which is also 
+  reflected in 2017. Thus, it can be said that although the total number of disease cases has decreased, Males still 
+  have the higher number of disease cases over ages 55.
+
+</p>
+
+
+
+
+  </div>
+</div>
+
+<div id="data-banner">
+  TopoJSON sourced from 
+  <a href="https://www.naturalearthdata.com/" target="_blank">Natural Earth</a> 
+  and Data sourced from 
+  <a href="https://www.aihw.gov.au/reports/chronic-disease/geographical-variation-in-disease/data" target="_blank">AIHW</a>.
+  Created by Harry Katelis (33114757)
+
+</div>
+
+<script>
+  vegaEmbed('#mapCombined', 'mapCombined.vg.json', { "actions": false }).catch(console.error);
+  vegaEmbed('#slope', 'slope.vg.json', { "actions": false }).catch(console.error);
+  vegaEmbed('#bubble', 'bubble.vg.json', { "actions": false }).catch(console.error);
+  vegaEmbed('#barchart2011', 'barchart2011.vg.json', { "actions": false }).catch(console.error);
+  vegaEmbed('#barchart2017', 'barchart2017.vg.json', { "actions": false }).catch(console.error);
+</script>
 
 </body>
-
-
 </html>
